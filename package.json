@@ -1,0 +1,26 @@
+{
+  "name": "2020-demo-scoring-server",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "LOG_LEVEL=trace NODE_ENV=development nodemon server.js | pino-pretty -t"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "env-var": "^5.1.0",
+    "fastify": "^2.0.0",
+    "fastify-autoload": "^1.0.0",
+    "fastify-plugin": "^1.5.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "uuid": "^3.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4",
+    "pino-pretty": "^3.2.2"
+  }
+}
