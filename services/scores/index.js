@@ -1,5 +1,5 @@
 'use strict';
-const log = require('../../utils/log')('game-service');
+const log = require('../../utils/log')('scoring-service');
 
 module.exports = async function (fastify, opts) {
   fastify.post('/scores', async function (request, reply) {
@@ -48,7 +48,7 @@ module.exports = async function (fastify, opts) {
       result = {answers, pointsAvailable, points: 0, correct}
     }
 
-    //kafka send result {game, player, item , answers, pointsAvailable: 0, points: pointsAvailable, correct}
+    //kafka send json {game, player, item, transaction: result}
     return result;
   });
 };
