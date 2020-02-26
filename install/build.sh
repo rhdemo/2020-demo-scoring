@@ -7,4 +7,4 @@ SOURCE_REPOSITORY_REF=${SOURCE_REPOSITORY_REF:-master}
 
 echo "Building ${IMAGE_REPOSITORY}/scoring-server from ${SOURCE_REPOSITORY_URL} on ${SOURCE_REPOSITORY_REF}"
 
-s2i build ${SOURCE_REPOSITORY_URL} --ref ${SOURCE_REPOSITORY_REF} --context-dir / ubi8/nodejs-12 ${IMAGE_REPOSITORY}
+s2i build ${SOURCE_REPOSITORY_URL} --ref ${SOURCE_REPOSITORY_REF} --context-dir / docker.io/centos/nodejs-10-centos7:latest ${IMAGE_REPOSITORY}

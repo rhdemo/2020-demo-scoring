@@ -3,7 +3,7 @@
 const path = require('path');
 const AutoLoad = require('fastify-autoload');
 const log = require('./utils/log')('scoring-server');
-
+const {kafkaProducer} = require("./kafka/producer");
 
 const opts = {};
 const {PORT, IP} = require('./utils/constants');
