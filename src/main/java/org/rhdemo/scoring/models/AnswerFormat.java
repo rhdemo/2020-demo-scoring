@@ -1,4 +1,4 @@
-package org.rhdemo.scoring;
+package org.rhdemo.scoring.models;
 
 public class AnswerFormat {
     private String format;

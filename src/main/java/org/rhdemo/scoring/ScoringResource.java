@@ -1,7 +1,11 @@
 package org.rhdemo.scoring;
 
+import org.rhdemo.scoring.models.Answer;
+import org.rhdemo.scoring.models.Guess;
+import org.rhdemo.scoring.models.Item;
+import org.rhdemo.scoring.models.Score;
+
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
