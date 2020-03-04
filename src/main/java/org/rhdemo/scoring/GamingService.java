@@ -5,15 +5,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.runtime.StartupEvent;
+import org.rhdemo.scoring.models.Game;
+import org.rhdemo.scoring.models.Player;
 import org.rhdemo.scoring.models.Round;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 @ApplicationScoped
-public class GameRounds {
+public class GamingService {
     private List<Round> rounds;
 
     public void init(@Observes StartupEvent ev) throws Exception {
@@ -24,7 +27,32 @@ public class GameRounds {
         rounds = objectMapper.readValue(is, new TypeReference<List<Round>>() {});
     }
 
-    public List<Round> getRounds() {
-        return rounds;
+    // todo need better state
+    public Game joinGame(Player player) {
+        Game game = new Game();
+        game.setId("1");
+        game.setDate(new Date().toString());
+        game.setState("active");
+        return game;
+    }
+    public Game getGame(String id) {
+        Game game = new Game();
+        game.setId("1");
+        game.setDate(new Date().toString());
+        game.setState("active");
+        return game;
+    }
+
+    public Round firstRound(Game game) {
+        return rounds.get(0);
+
+    }
+
+    public Round nextRound(Game game, int currentRound) {
+        return rounds.get(currentRound + 1);
+    }
+
+    public Round getRound(Game game, int round) {
+        return rounds.get(round);
     }
 }

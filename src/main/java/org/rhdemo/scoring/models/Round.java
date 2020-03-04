@@ -1,9 +1,11 @@
 package org.rhdemo.scoring.models;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Round {
     private int id;
+    private String version;
     private String name;
     private String description;
     private List<Object> price;
@@ -11,12 +13,35 @@ public class Round {
     private List<AnswerFormat> answers;
     private String image;
 
+    public Round() {
+    }
+
+
+    public Round(Round round) {
+        this.id = round.id;
+        this.version = round.version;
+        this.name = round.name;
+        this.description = round.description;
+        this.price = round.price;
+        this.answers = round.answers;
+        this.image = round.image;
+        this.choices = new LinkedList<>(round.choices);
+    }
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getName() {
