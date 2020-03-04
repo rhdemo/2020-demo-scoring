@@ -45,6 +45,7 @@
     },
     "currentRound": {
         "id": 0,
+        "version": "1",
         "pointsAvailable": 100,
         "name": "Dollar bill",
         "description": "One United States dollar and no cents",
@@ -74,6 +75,7 @@
     "wrong": 0,
     "currentRound": {
         "id": 0,
+        "version": "1",
         "pointsAvailable": 100,
         "guess": [1, "."]
     }
@@ -87,7 +89,7 @@
     "creationServer": "SFO",
     "gameServer": "SFO",
     "scoringServer": "NY",
-    "correctGuess": true,
+    "status": "CORRECT_GUESS",
     "score": 0,
     "award": 0,
     "right": 1,
@@ -112,6 +114,7 @@
     },
     "currentRound": {
         "id": 0,
+        "version": "1",
         "pointsAvailable": 100,
         "name": "Dollar bill",
         "description": "One United States dollar and no cents",
@@ -141,6 +144,7 @@
     "wrong": 0,
     "currentRound": {
         "id": 0,
+        "version": "1",
         "pointsAvailable": 100,
         "guess": [1, ".", 5]
     }
@@ -154,7 +158,7 @@
     "creationServer": "SFO",
     "gameServer": "SFO",
     "scoringServer": "NY",
-    "correctGuess": false,
+    "status": "BAD_GUESS",
     "score": 0,
     "award": 0,
     "right": 1,
@@ -179,6 +183,7 @@
     },
     "currentRound": {
         "id": 0,
+        "version": "1",
         "pointsAvailable": 95,
         "name": "Dollar bill",
         "description": "One United States dollar and no cents",
@@ -208,6 +213,7 @@
     "totalCorrect": 1,
     "currentRound": {
         "id": 0,
+        "version": "1",
         "pointsAvailable": 95,
         "guess": [1, ".", 0, 0]
     }
@@ -221,7 +227,7 @@
     "creationServer": "SFO",
     "gameServer": "SFO",
     "scoringServer": "NY",
-    "correctGuess": true,
+    "status": "COMPLETED_ROUND",
     "score": 95,
     "award": 95,
     "right": 3,
@@ -246,6 +252,7 @@
     },
     "currentRound": {
         "id": 1,
+        "version": "1",
         "pointsAvailable": 100,
         "name": "Kernel of truth t-shirt",
         "description": "This 4.3 ounce, 60% combed ringspun...",
@@ -256,6 +263,76 @@
     }
 }
 ```
+
+### Round version changed for guess POST /game/score
+
+#### Request Body:
+
+```json
+{
+    "creationServer": "SFO",
+    "gameServer": "SFO",
+    "scoringServer": "NY",
+    "player": {
+        "id": "Emerald Wanderer",
+        "username": "Emerald Wanderer",
+    },
+    "score": 0,
+    "right": 0,
+    "wrong": 0,
+    "currentRound": {
+        "id": 0,
+        "version": "1",
+        "pointsAvailable": 100,
+        "guess": [1, "."]
+    }
+}
+```
+
+#### Response Body
+
+```json
+{
+    "creationServer": "SFO",
+    "gameServer": "SFO",
+    "scoringServer": "NY",
+    "status": "RESET_ROUND",
+    "score": 0,
+    "award": 0,
+    "right": 0,
+    "wrong": 0,
+    "game": {
+        "id": "new-game-1583157438",
+        "state": "active",
+        "date": "2020-03-02T13:57:18.000Z",
+        "configuration": {}
+    },
+    "player": {
+        "id": "Emerald Wanderer",
+        "username": "Emerald Wanderer",
+        "avatar": {
+            "body": 1,
+            "eyes": 3,
+            "mouth": 0,
+            "ears": 2,
+            "nose": 1,
+            "color": 3
+        }
+    },
+    "currentRound": {
+        "id": 0,
+        "version": "2",
+        "pointsAvailable": 100,
+        "name": "Dollar bill",
+        "description": "One United States dollar and no cents",
+        "guess": [],
+        "choices": [9, 1, 0, 5, 0, 1],
+        "answers": [{"format": "number"}, {"format": "decimal"}, {"format": "number"}, {"format": "number"}],
+        "image": "/static/images/0.jpg"
+    }
+}
+```
+
 
 ### Scoring Kafka Message
 Scoring Server -> Kafka mirrored to HQ
