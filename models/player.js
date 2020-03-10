@@ -3,10 +3,17 @@ const itemData = require('./item-data');
 
 class Player {
   constructor(player) {
-    this.score = 0;
-    this.right = 0;
-    this.wrong = 0;
+    this.score = {
+      status: 'START',
+        scoringServer: CLUSTER_NAME,
+        score: 0,
+        right: 1,
+        wrong: 1,
+        award: 0
+    };
+
     this.lastRound = null;
+    this.history = [];
     this.initCurrentRound(0);
 
     // override generated values with input fields
@@ -14,20 +21,30 @@ class Player {
     if (player) {
       Object.assign(this, player);
     }
-
-    this.scoringServer = CLUSTER_NAME;
   }
 
   initCurrentRound(index) {
     const item = itemData[index];
+
     this.currentRound = {
-      itemId: item.id,
+      id: item.id,
+      version: "1",
+      pointsAvailable: 100,
+      name: item.name,
+      description: item.description,
       choices: [...item.choices],
       answers: [...item.answers],
       image: item.image,
-      points: 100,
       correct: false
     };
+
+    this.history.push({
+      itemId: item.id,
+      itemName: item.name,
+      right: 0,
+      wrong: 0,
+      pointsAvailable: null
+    });
   }
 
   addGuess(guessAnswers) {
@@ -37,7 +54,8 @@ class Player {
   }
 
   _updateAnswers(guessAnswers) {
-    let item = itemData[this.currentRound.itemId];
+    let item = itemData[this.currentRound.id];
+    let historyRecord = this.history[this.history.length - 1];
     this.currentRound.answers.forEach((currentAnswer, index) => {
       if (currentAnswer.format !== "number" || currentAnswer.result === "correct") {
         return; // skip, no need to answer
@@ -52,16 +70,22 @@ class Player {
       currentAnswer.from = guessAnswer.from;
       if (currentAnswer.number === item.price[index]) {
         currentAnswer.result = "correct";
-        this.right += 1;
-        this.currentRound.choices[guessAnswer.from] = null;
+        this.score.right += 1;
+        historyRecord.right += 1;
+        if (guessAnswer.from !== 'bonus') {
+          this.currentRound.choices[guessAnswer.from] = null;
+        }
       } else {
         currentAnswer.result = "incorrect";
-        this.wrong += 1;
-        this.currentRound.points = this.currentRound.points - 5;
-        if (currentAnswer.points < 0) {
-          currentAnswer.points = 0;
+        this.score.wrong += 1;
+        historyRecord.wrong += 1;
+        this.currentRound.pointsAvailable = this.currentRound.pointsAvailable - 5;
+        if (this.currentRound.pointsAvailable < 0) {
+          this.currentRound.pointsAvailable = 0;
         }
-        this.currentRound.choices[guessAnswer.from] = item.choices[guessAnswer.from];
+        if (guessAnswer.from !== 'bonus') {
+          this.currentRound.choices[guessAnswer.from] = item.choices[guessAnswer.from];
+        }
       }
     });
   }
@@ -79,11 +103,13 @@ class Player {
 
     if (currentRoundCorrect) {
       this.lastRound = this.currentRound;
-      this.score = this.score + this.lastRound.points;
-      let nextItemId = this.lastRound.itemId + 1;
+      this.score.score = this.score.score + this.lastRound.pointsAvailable;
+      let nextItemId = this.lastRound.id + 1;
       if (nextItemId >= itemData.length) {
         nextItemId = 0;
       }
+      let historyRecord = this.history[this.history.length - 1];
+      historyRecord.points = this.lastRound.pointsAvailable;
       this.initCurrentRound(nextItemId);
     }
   }

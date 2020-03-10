@@ -6,6 +6,7 @@ const {kafkaProducer, KAFKA_TRANSACTION_TOPIC} = require('../../kafka/producer')
 module.exports = async function (fastify, opts) {
   fastify.post('/scores', async function (request, reply) {
     log.debug('scores request body', request.body);
+    const startTime = new Date();
     let guess = request.body;
 
     if (!guess.player) {
@@ -20,14 +21,29 @@ module.exports = async function (fastify, opts) {
       // New player needs initialized 1st Round
       let player = new Player(guess.player);
       log.debug('init player round', {player});
+      const endTime = new Date();
+      const timeDiff = endTime - startTime;
+
+      if (timeDiff > 100) {
+        log.warn(`Scoring took ${timeDiff} ms`);
+      }
       return {player};
     }
 
     // Existing player adjusted for new answers
     let player = new Player(guess.player);
     player.addGuess(guess.answers);
-    sendKafkaMsg(formatKafkaMsg(player));
+    sendKafkaMsg(player.id, formatKafkaMsg(player));
     log.debug('return-scores', {player});
+
+    const endTime = new Date();
+    const timeDiff = endTime - startTime;
+
+    if (timeDiff > 100) {
+      log.warn(`Scoring took ${timeDiff} ms`);
+    }
+
+    log.debug('scores response', {player});
     return {player};
   });
 };
@@ -51,15 +67,24 @@ function formatKafkaMsg(player) {
   return JSON.stringify(msg);
 }
 
-function sendKafkaMsg(jsonMsg) {
+function sendKafkaMsg(key, jsonMsg) {
   let kafkaMsg = Buffer.from(jsonMsg);
 
   log.debug(`kafka produce topic: ${KAFKA_TRANSACTION_TOPIC}; key: null; msg: ${jsonMsg}`);
 
+  const startTime = new Date();
+
   try {
-    let result = kafkaProducer.produce(KAFKA_TRANSACTION_TOPIC, -1, kafkaMsg, null);
+    let result = kafkaProducer.produce(KAFKA_TRANSACTION_TOPIC, -1, kafkaMsg, key);
     log.debug('kafka producer sent guess transaction payload', result, jsonMsg);
   } catch (error) {
-    log.error('kafka producer failed to send guess transaction payload.  Error: ', error.message);
+    log.error('kafka producer failed to send guess transaction payload.  Error: ', error);
+  }
+
+  const endTime = new Date();
+  const timeDiff = endTime - startTime;
+
+  if (timeDiff > 100) {
+    log.warn(`Kafka message send request took ${timeDiff} ms`);
   }
 }
