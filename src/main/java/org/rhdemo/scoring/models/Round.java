@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Round {
     private int id;
-    private String version;
+    private String version = "1";
     private String name;
     private String description;
     private List<Object> price;
@@ -15,7 +15,6 @@ public class Round {
 
     public Round() {
     }
-
 
     public Round(Round round) {
         this.id = round.id;
@@ -36,6 +35,11 @@ public class Round {
         this.id = id;
     }
 
+    public Round id(int id) {
+        this.id = id;
+        return this;
+    }
+
     public String getVersion() {
         return version;
     }
@@ -52,12 +56,22 @@ public class Round {
         this.name = name;
     }
 
+    public Round name(String name) {
+        this.name = name;
+        return this;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Round description(String description) {
+        this.description = description;
+        return this;
     }
 
     public List<Object> getPrice() {
@@ -67,6 +81,11 @@ public class Round {
     public void setPrice(List<Object> price) {
         this.price = price;
     }
+    public Round price(Object... prices) {
+        this.price = new LinkedList();
+        for (Object p : prices) this.price.add(p);
+        return this;
+    }
 
     public List<AnswerFormat> getAnswers() {
         return answers;
@@ -74,6 +93,11 @@ public class Round {
 
     public void setAnswers(List<AnswerFormat> answers) {
         this.answers = answers;
+    }
+    public Round answers(AnswerFormat... formats) {
+        this.answers = new LinkedList<>();
+        for (AnswerFormat f : formats) this.answers.add(f);
+        return this;
     }
 
     public List<Integer> getChoices() {
@@ -83,6 +107,11 @@ public class Round {
     public void setChoices(List<Integer> choices) {
         this.choices = choices;
     }
+    public Round choices(int... picks) {
+        this.choices = new LinkedList<>();
+        for (int p : picks) this.choices.add(p);
+        return this;
+    }
 
     public String getImage() {
         return image;
@@ -90,5 +119,9 @@ public class Round {
 
     public void setImage(String image) {
         this.image = image;
+    }
+    public Round image(String image) {
+        this.image = image;
+        return this;
     }
 }

@@ -8,6 +8,8 @@ import org.rhdemo.scoring.models.GameStatus;
 import org.rhdemo.scoring.models.Player;
 import org.rhdemo.scoring.models.PlayerLeaderboardTransaction;
 import org.rhdemo.scoring.models.Round;
+import org.rhdemo.scoring.services.GamingService;
+import org.rhdemo.scoring.services.KafkaLeaderboard;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
