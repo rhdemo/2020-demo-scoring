@@ -1,5 +1,7 @@
 package org.rhdemo.scoring;
 
+import org.rhdemo.scoring.models.Environment;
+
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
