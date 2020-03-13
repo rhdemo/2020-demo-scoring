@@ -1,4 +1,4 @@
-package org.rhdemo.scoring;
+package org.rhdemo.scoring.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
