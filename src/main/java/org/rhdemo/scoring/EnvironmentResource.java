@@ -1,5 +1,7 @@
 package org.rhdemo.scoring;
 
+import org.rhdemo.scoring.models.Environment;
+
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -15,7 +17,7 @@ public class EnvironmentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> status() {
+    public Map<String, Object> environment() {
         Map<String, Object> status = new HashMap<>();
         status.put("CLUSTER_NAME", env.CLUSTER_NAME());
         status.put("DATAGRID_HOST", env.DATAGRID_HOST());

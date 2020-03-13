@@ -1,11 +1,12 @@
 package org.rhdemo.scoring;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.rhdemo.scoring.models.CurrentRound;
+import org.rhdemo.scoring.models.Environment;
 import org.rhdemo.scoring.models.Game;
 import org.rhdemo.scoring.models.Guess;
 import org.rhdemo.scoring.models.GameStatus;
 import org.rhdemo.scoring.models.Player;
+import org.rhdemo.scoring.models.PlayerLeaderboardTransaction;
 import org.rhdemo.scoring.models.Round;
 
 import javax.inject.Inject;
@@ -29,6 +30,9 @@ public class ScoringResource {
 
     @Inject
     GamingService games;
+
+    @Inject
+    KafkaLeaderboard leaderboard;
 
     @Inject
     Environment env;
@@ -104,10 +108,25 @@ public class ScoringResource {
         } else {
             correctGuess(guess, game, currentRound, round, status, correctIndex);
         }
+        sendLeaderboardTransaction(guess, game, status);
         return status;
     }
 
-    private void correctGuess(Guess guess, Game game, CurrentRound currentRound, Round round, GameStatus status, int correctIndex) {
+    private void sendLeaderboardTransaction(Guess guess, Game game, GameStatus status) {
+        PlayerLeaderboardTransaction tx = new PlayerLeaderboardTransaction(guess.getPlayer());
+        tx.setGameId(game.getId());
+        tx.setCreationServer(guess.getCreationServer());
+        tx.setGameServer(GAME_SERVER);
+        tx.setScoringServer(env.CLUSTER_NAME());
+
+        tx.setRight(status.getRight());
+        tx.setWrong(status.getWrong());
+        tx.setScore(status.getScore());
+        leaderboard.send(tx);
+    }
+
+    private void correctGuess(Guess guess, Game game, CurrentRound currentRound,
+                              Round round, GameStatus status, int correctIndex) {
         status.setRight(guess.getRight() + 1);
         status.setWrong(guess.getWrong());
         if (correctIndex + 1 == round.getPrice().size()) { // COMPLETE!

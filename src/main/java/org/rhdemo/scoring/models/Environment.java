@@ -1,4 +1,4 @@
-package org.rhdemo.scoring;
+package org.rhdemo.scoring.models;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
