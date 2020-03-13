@@ -1,5 +1,6 @@
 package org.rhdemo.scoring;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.rhdemo.scoring.models.CurrentRound;
 import org.rhdemo.scoring.models.Game;
 import org.rhdemo.scoring.models.Guess;
@@ -24,13 +25,13 @@ import java.util.Map;
 public class ScoringResource {
     public static final int ROUND_POINTS = 100;
     public static final int WRONG_GUESS = 5;
-    public static final String CREATION_SERVER = "SFO";
     public static final String GAME_SERVER = "SFO";
-    public static final String SCORING_SERVER = "SFO";
 
     @Inject
     GamingService games;
 
+    @Inject
+    Environment env;
 
     @Path("/join")
     @POST
@@ -46,9 +47,9 @@ public class ScoringResource {
         status.setPlayer(player);
         status.setGame(game);
         status.setStatus("GAME_START");
-        status.setCreationServer(CREATION_SERVER);
+        status.setCreationServer(env.CLUSTER_NAME());
         status.setGameServer(GAME_SERVER);
-        status.setScoringServer(SCORING_SERVER);
+        status.setScoringServer(env.CLUSTER_NAME());
         status.setCurrentRound(current);
         return status;
     }
@@ -84,7 +85,7 @@ public class ScoringResource {
         status.setPlayer(guess.getPlayer());
         status.setCreationServer(guess.getCreationServer());
         status.setGameServer(GAME_SERVER);
-        status.setScoringServer(SCORING_SERVER);
+        status.setScoringServer(env.CLUSTER_NAME());
         status.setGame(game);
         status.setScore(guess.getScore());
 
