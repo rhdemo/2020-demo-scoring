@@ -2,12 +2,9 @@ package org.rhdemo.scoring;
 
 import org.rhdemo.scoring.models.CurrentRound;
 import org.rhdemo.scoring.models.Environment;
-import org.rhdemo.scoring.models.Game;
-import org.rhdemo.scoring.models.Guess;
 import org.rhdemo.scoring.models.GameStatus;
-import org.rhdemo.scoring.models.Player;
-import org.rhdemo.scoring.models.PlayerLeaderboardTransaction;
 import org.rhdemo.scoring.models.Round;
+import org.rhdemo.scoring.models.Score;
 import org.rhdemo.scoring.services.GamingService;
 import org.rhdemo.scoring.services.KafkaLeaderboard;
 
@@ -20,15 +17,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 
 @Path("/game")
 public class ScoringResource {
     public static final int ROUND_POINTS = 100;
     public static final int WRONG_GUESS = 5;
-    public static final String GAME_SERVER = "SFO";
 
     @Inject
     GamingService games;
@@ -43,21 +37,16 @@ public class ScoringResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public GameStatus join(Player player) {
-        Game game = games.joinGame(player);
-        Round round = games.firstRound(game);
+    public GameStatus join(GameStatus state) {
+        Round round = games.firstRound(state.getGame());
         CurrentRound current = new CurrentRound(round);
         current.setPointsAvailable(ROUND_POINTS);
-
-        GameStatus status = new GameStatus();
-        status.setPlayer(player);
-        status.setGame(game);
-        status.setStatus("GAME_START");
-        status.setCreationServer(env.CLUSTER_NAME());
-        status.setGameServer(GAME_SERVER);
-        status.setScoringServer(env.CLUSTER_NAME());
-        status.setCurrentRound(current);
-        return status;
+        Score score = new Score();
+        score.setScoringServer(env.CLUSTER_NAME());
+        score.setStatus(Score.START);
+        state.setScore(score);
+        state.setCurrentRound(current);
+        return state;
     }
 
 
@@ -70,129 +59,88 @@ public class ScoringResource {
 
     }
 
-    private GameStatus resetRound(Guess guess, Round updatedRound) {
-        return null; // todo
-    }
-
     @Path("/score")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public GameStatus scoring(Guess guess) {
-        Game game = games.getGame(guess.getGame().getId());
-        // todo check game status
+    public GameStatus scoring(GameStatus state) {
+        CurrentRound currentRound = state.getCurrentRound();
+        Round round = games.getRound(state.getGame(), currentRound.getId());
+        state.getScore().setScoringServer(env.CLUSTER_NAME());
 
-        CurrentRound currentRound = guess.getCurrentRound();
-        Round round = games.getRound(game, currentRound.getId());
-        if (!round.getVersion().equals(currentRound.getVersion())) {
-            return resetRound(guess, round);
-        }
-        GameStatus status = new GameStatus();
-        status.setPlayer(guess.getPlayer());
-        status.setCreationServer(guess.getCreationServer());
-        status.setGameServer(GAME_SERVER);
-        status.setScoringServer(env.CLUSTER_NAME());
-        status.setGame(game);
-        status.setScore(guess.getScore());
 
         boolean failed = false;
-        int correctIndex = -1;
+        boolean allGuessesCorrect = true;
         for (int i = 0; i < currentRound.getGuess().size(); i++) {
-            if (!round.getPrice().get(i).equals(currentRound.getGuess().get(i))) {
-                failed = true;
-                break;
+            Object curr = currentRound.getGuess().get(i);
+            if (curr instanceof Integer) {
+                if (!round.getPrice().get(i).equals(curr)) {
+                    failed = true;
+                    currentRound.getGuess().set(i, ""); // reset guess to empty slot
+                    allGuessesCorrect = false;
+                }
+            } else if (".".equals(curr)) {
+                if (!round.getPrice().get(i).equals(curr)) {
+                    failed = true;
+                    allGuessesCorrect = false;
+                }
+            } else {
+                // index not guessed yet
+                allGuessesCorrect = false;
             }
-            correctIndex = i;
+        }
+        if (allGuessesCorrect && currentRound.getGuess().size() != round.getPrice().size()) allGuessesCorrect = false;
+
+
+        // update or reset choices
+        for (int i = 0; i < currentRound.getChoices().size(); i++) {
+            Object choice = currentRound.getChoices().get(i);
+            if ("correct".equals(choice)) continue;
+            if ("guess".equals(choice)) {
+                if (failed) {
+                    currentRound.getChoices().set(i, round.getChoices().get(i));
+                } else {
+                    currentRound.getChoices().set(i, "correct");
+                }
+            }
         }
 
         if (failed) {
-            failedGuess(guess, game, currentRound, round, status, correctIndex);
+            failedGuess(state);
         } else {
-            correctGuess(guess, game, currentRound, round, status, correctIndex);
+            correctGuess(state, allGuessesCorrect);
         }
-        sendLeaderboardTransaction(guess, game, status);
-        return status;
+        leaderboard.send(state);
+        return state;
     }
 
-    private void sendLeaderboardTransaction(Guess guess, Game game, GameStatus status) {
-        PlayerLeaderboardTransaction tx = new PlayerLeaderboardTransaction(guess.getPlayer());
-        tx.setGameId(game.getId());
-        tx.setCreationServer(guess.getCreationServer());
-        tx.setGameServer(GAME_SERVER);
-        tx.setScoringServer(env.CLUSTER_NAME());
-
-        tx.setRight(status.getRight());
-        tx.setWrong(status.getWrong());
-        tx.setScore(status.getScore());
-        leaderboard.send(tx);
-    }
-
-    private void correctGuess(Guess guess, Game game, CurrentRound currentRound,
-                              Round round, GameStatus status, int correctIndex) {
-        status.setRight(guess.getRight() + 1);
-        status.setWrong(guess.getWrong());
-        if (correctIndex + 1 == round.getPrice().size()) { // COMPLETE!
-            status.setScore(guess.getScore() + currentRound.getPointsAvailable());
-            status.setAward(currentRound.getPointsAvailable());
-            status.setStatus(GameStatus.COMPLETED_ROUND);
+    private void correctGuess(GameStatus state, boolean allCorrect) {
+        state.getScore().setRight(state.getScore().getRight() + 1);
+        if (allCorrect) { // COMPLETE!
+            state.getScore().setScore(state.getScore().getScore() + state.getCurrentRound().getPointsAvailable());
+            state.getScore().setAward(state.getCurrentRound().getPointsAvailable());
+            state.getScore().setStatus(Score.COMPLETED_ROUND);
             // next round
-            Round next = games.nextRound(game, currentRound.getId());
+            Round next = games.nextRound(state.getGame(), state.getCurrentRound().getId());
             if (next == null) {
-                status.getGame().setState(GameStatus.GAME_OVER);
+                state.setCurrentRound(null);
+                state.getScore().setStatus(Score.GAME_OVER);
             } else {
                 CurrentRound nextCurrent = new CurrentRound(next);
                 nextCurrent.setPointsAvailable(ROUND_POINTS);
-                status.setCurrentRound(nextCurrent);
+                state.setCurrentRound(nextCurrent);
             }
         } else {
-            CurrentRound nextCurrent = new CurrentRound(round);
-            nextCurrent.setPointsAvailable(currentRound.getPointsAvailable());
-            status.setStatus(GameStatus.CORRECT_GUESS);
-            status.setCurrentRound(nextCurrent);
-            buildGuessesAndChoices(guess, correctIndex, nextCurrent);
+            state.getScore().setStatus(Score.CORRECT_GUESS);
         }
     }
 
-    private void failedGuess(Guess guess, Game game, CurrentRound currentRound, Round round, GameStatus status, int correctIndex) {
-        status.setStatus(GameStatus.BAD_GUESS);
-        status.setRight(guess.getRight());
-        status.setWrong(guess.getWrong() + 1);
-        if (currentRound.getPointsAvailable() - WRONG_GUESS <= 0) {
-            // next round
-            Round next = games.nextRound(game, currentRound.getId());
-            if (next == null) {
-                status.getGame().setState(GameStatus.GAME_OVER);
-            } else {
-                CurrentRound wrong = new CurrentRound(next);
-                wrong.setPointsAvailable(ROUND_POINTS);
-            }
-        } else {
-            CurrentRound wrong = new CurrentRound(round);
-            status.setCurrentRound(wrong);
-            wrong.setPointsAvailable(currentRound.getPointsAvailable() - WRONG_GUESS);
-            buildGuessesAndChoices(guess, correctIndex, wrong);
-        }
-    }
-
-    private void buildGuessesAndChoices(Guess guess, int correctIndex, CurrentRound current) {
-        if (correctIndex > -1) {
-            LinkedList<Object> guesses = new LinkedList<>();
-            for (int i = 0; i <= correctIndex; i++) {
-                Object obj = guess.getCurrentRound().getGuess().get(i);
-                guesses.add(obj);
-                // remove guess from available choices
-                if (obj instanceof Integer) {
-                    Iterator<Integer> it = current.getChoices().iterator();
-                    while (it.hasNext()) {
-                        if (it.next().equals(obj)) {
-                            it.remove();
-                            break;
-                        }
-                    }
-                }
-
-            }
-            current.setGuess(guesses);
-        }
+    private void failedGuess(GameStatus state) {
+        state.getScore().setStatus(Score.BAD_GUESS);
+        state.getScore().setWrong(state.getScore().getWrong() + 1);
+        int pointsAvailable = state.getCurrentRound().getPointsAvailable();
+        pointsAvailable -= WRONG_GUESS;
+        if (pointsAvailable <= 0) pointsAvailable = 1;
+        state.getCurrentRound().setPointsAvailable(pointsAvailable);
     }
 }

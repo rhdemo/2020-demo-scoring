@@ -9,7 +9,7 @@ public class Round {
     private String name;
     private String description;
     private List<Object> price;
-    private List<Integer> choices;
+    private List<Object> choices;
     private List<AnswerFormat> answers;
     private String image;
 
@@ -100,11 +100,11 @@ public class Round {
         return this;
     }
 
-    public List<Integer> getChoices() {
+    public List<Object> getChoices() {
         return choices;
     }
 
-    public void setChoices(List<Integer> choices) {
+    public void setChoices(List<Object> choices) {
         this.choices = choices;
     }
     public Round choices(int... picks) {
