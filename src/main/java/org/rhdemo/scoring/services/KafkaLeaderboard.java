@@ -9,8 +9,12 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.jboss.logging.Logger;
+import org.rhdemo.scoring.ScoringJsonCustomizer;
 import org.rhdemo.scoring.models.Environment;
-import org.rhdemo.scoring.models.PlayerLeaderboardTransaction;
+import org.rhdemo.scoring.models.GameStatus;
+import org.rhdemo.scoring.models.leaderboard.GameMessage;
+import org.rhdemo.scoring.models.leaderboard.Player;
+import org.rhdemo.scoring.models.leaderboard.Transaction;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -22,8 +26,7 @@ public class KafkaLeaderboard {
     private static final Logger log = Logger.getLogger("scoring.kafka.hq");
 
     public Producer<Integer, String> createProducer() {
-        objectMapper = new ObjectMapper();
-        objectWriter = objectMapper.writerFor(PlayerLeaderboardTransaction.class);
+        objectWriter = objectMapper.writerFor(GameMessage.class);
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.KAFKA_BROKER_LIST_HOST() + ":" + env.KAFKA_BROKER_LIST_PORT());
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "scoring-service-" + env.CLUSTER_NAME());
@@ -34,11 +37,13 @@ public class KafkaLeaderboard {
 
     private int count;
     private Producer<Integer, String> producer;
-    private ObjectMapper objectMapper;
     private ObjectWriter objectWriter;
 
     @Inject
     Environment env;
+
+    @Inject
+    ObjectMapper objectMapper;
 
     private boolean initialized;
 
@@ -60,11 +65,32 @@ public class KafkaLeaderboard {
         initialized = true;
     }
 
-    public void send(PlayerLeaderboardTransaction tx) {
+    public void send(GameStatus state) {
         if (!initialized) return;
+
+        GameMessage message = new GameMessage();
+        message.setGame(state.getGame());
+        Transaction tx = new Transaction();
+        message.setTransaction(tx);
+        if (state.getScore().getAward() > 0) {
+            tx.setPoints(state.getScore().getAward());
+            tx.setCorrect(true);
+        }
+
+        Player player = new Player();
+        message.setPlayer(player);
+        player.setAvatar(state.getPlayer().getAvatar());
+        player.setCreationServer(state.getPlayer().getCreationServer());
+        player.setGameServer(state.getPlayer().getGameServer());
+        player.setScoringServer(state.getScore().getScoringServer());
+        player.setScore(state.getScore().getScore());
+        player.setRight(state.getScore().getRight());
+        player.setWrong(state.getScore().getWrong());
+        player.setGameId(state.getGame().getId());
+
         try {
-            String message = objectWriter.writeValueAsString(tx);
-            producer.send(new ProducerRecord<>(env.KAFKA_TRANSACTION_TOPIC(), count++, message));
+            String json = objectWriter.writeValueAsString(message);
+            producer.send(new ProducerRecord<>(env.KAFKA_TRANSACTION_TOPIC(), count++, json));
             producer.flush();
         } catch (Exception e) {
             log.error("Failed to send transaction: ", e);

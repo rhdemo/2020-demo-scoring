@@ -1,33 +1,38 @@
 package org.rhdemo.scoring.models;
 
+import javax.enterprise.inject.Produces;
+import java.time.OffsetDateTime;
+
+/**
+ * Game
+ */
 public class Game {
-    public static final String GAME_ACTIVE = "active";
+  private String id;
+  private GameState state;
+  private OffsetDateTime date;
 
-    private String id;
-    private String state;
-    private String date;
+  public String getId() {
+    return id;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public GameState getState() {
+    return state;
+  }
 
-    public String getState() {
-        return state;
-    }
+  public void setState(GameState state) {
+    this.state = state;
+  }
 
-    public void setState(String state) {
-        this.state = state;
-    }
+  public OffsetDateTime getDate() {
+    return date;
+  }
 
-    public String getDate() {
-        return date;
-    }
+  public void setDate(OffsetDateTime date) {
+    this.date = date;
+  }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
 }

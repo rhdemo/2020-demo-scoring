@@ -1,4 +1,4 @@
 package org.rhdemo.scoring.models;
 
-public class Guess extends GameState {
+public class Guess extends GameStatus {
 }
