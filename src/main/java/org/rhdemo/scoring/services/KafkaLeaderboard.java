@@ -25,18 +25,17 @@ import java.util.Properties;
 public class KafkaLeaderboard {
     private static final Logger log = Logger.getLogger("scoring.kafka.hq");
 
-    public Producer<Integer, String> createProducer() {
+    public Producer<String, String> createProducer() {
         objectWriter = objectMapper.writerFor(GameMessage.class);
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.KAFKA_BROKER_LIST_HOST() + ":" + env.KAFKA_BROKER_LIST_PORT());
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "scoring-service-" + env.CLUSTER_NAME());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class.getName());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        return new KafkaProducer<Integer, String>(props);
+        return new KafkaProducer<>(props);
     }
 
-    private int count;
-    private Producer<Integer, String> producer;
+    private Producer<String, String> producer;
     private ObjectWriter objectWriter;
 
     @Inject
@@ -79,6 +78,8 @@ public class KafkaLeaderboard {
 
         Player player = new Player();
         message.setPlayer(player);
+        player.setId(state.getPlayer().getId());
+        player.setUsername(state.getPlayer().getUsername());
         player.setAvatar(state.getPlayer().getAvatar());
         player.setCreationServer(state.getPlayer().getCreationServer());
         player.setGameServer(state.getPlayer().getGameServer());
@@ -90,7 +91,7 @@ public class KafkaLeaderboard {
 
         try {
             String json = objectWriter.writeValueAsString(message);
-            producer.send(new ProducerRecord<>(env.KAFKA_TRANSACTION_TOPIC(), count++, json));
+            producer.send(new ProducerRecord<>(env.KAFKA_TRANSACTION_TOPIC(), player.getId(), json));
             producer.flush();
         } catch (Exception e) {
             log.error("Failed to send transaction: ", e);

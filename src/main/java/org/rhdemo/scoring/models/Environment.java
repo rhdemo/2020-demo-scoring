@@ -24,6 +24,13 @@ public class Environment {
     @ConfigProperty(name="kafka.transaction.topic", defaultValue = "undefined")
     String KAFKA_TRANSACTION_TOPIC;
 
+    @ConfigProperty(name="log.transactions", defaultValue = "false")
+    boolean LOG_TRANSACTIONS;
+
+    public boolean LOG_TRANSACTIONS() {
+        return LOG_TRANSACTIONS;
+    }
+
     public String CLUSTER_NAME() {
         return CLUSTER_NAME;
     }
