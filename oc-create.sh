@@ -1,3 +1,6 @@
-oc create deployment scoring --image quay.io/redhatdemo/2020-quarkus-scoring-server:latest
-oc expose deployment/scoring --port 8080
-oc expose service/scoring
+#!/usr/bin/env bash
+set -x
+oc project scoring 2> /dev/null || oc new-project scoring
+oc adm policy add-scc-to-user anyuid -n scoring -z default
+oc create -f scoring-deployment.yaml
+
