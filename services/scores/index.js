@@ -17,6 +17,8 @@ module.exports = async function (fastify, opts) {
         .send({ message: 'Malformed request' });
     }
 
+    log.info(`received score from ${guess.player.id}`);
+
     if (!guess.answers) {
       // New player needs initialized 1st Round
       let player = new Player(guess.player);
@@ -49,15 +51,15 @@ module.exports = async function (fastify, opts) {
 };
 
 function formatKafkaMsg(player) {
-  let {gameId, id, username, score, right, wrong, avatar, creationServer, gameServer, scoringServer} = player;
+  let {gameId, id, username, score, avatar, creationServer, gameServer, scoringServer} = player;
   const msg = {
     player: {
       gameId,
       id,
       username,
-      score,
-      right,
-      wrong,
+      score: score.score,
+      right: score.right,
+      wrong: score.wrong,
       avatar,
       creationServer, // can have duplicate user names on different clusters
       gameServer, // current game server
@@ -70,7 +72,8 @@ function formatKafkaMsg(player) {
 function sendKafkaMsg(key, jsonMsg) {
   let kafkaMsg = Buffer.from(jsonMsg);
 
-  log.debug(`kafka produce topic: ${KAFKA_TRANSACTION_TOPIC}; key: null; msg: ${jsonMsg}`);
+  log.info(`kafka produce topic: ${KAFKA_TRANSACTION_TOPIC}; key: ${key}`);
+  log.debug(`kafka produce topic: ${KAFKA_TRANSACTION_TOPIC}; key: ${key}; msg: ${jsonMsg}`);
 
   const startTime = new Date();
 
