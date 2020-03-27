@@ -1,5 +1,6 @@
 package org.rhdemo.scoring;
 
+import org.jboss.logging.Logger;
 import org.rhdemo.scoring.models.CurrentRound;
 import org.rhdemo.scoring.models.Environment;
 import org.rhdemo.scoring.models.GameStatus;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 @Path("/game")
 public class ScoringResource {
+    private static final Logger log = Logger.getLogger("scoring");
     public static final int ROUND_POINTS = 100;
     public static final int WRONG_GUESS = 5;
 
@@ -38,6 +40,7 @@ public class ScoringResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public GameStatus join(GameStatus state) {
+        if (env.LOG_TRANSACTIONS()) log.info("Player joined: " + state.getPlayer().getId());
         Round round = games.firstRound(state.getGame());
         CurrentRound current = new CurrentRound(round);
         current.setPointsAvailable(ROUND_POINTS);
@@ -64,6 +67,7 @@ public class ScoringResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public GameStatus scoring(GameStatus state) {
+        if (env.LOG_TRANSACTIONS()) log.info("Guess: " + state.getPlayer().getId());
         CurrentRound currentRound = state.getCurrentRound();
         Round round = games.getRound(state.getGame(), currentRound.getId());
         state.getScore().setScoringServer(env.CLUSTER_NAME());

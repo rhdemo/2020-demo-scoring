@@ -5,6 +5,7 @@ public class Player {
     private String username;
     private String creationServer;
     private String gameServer;
+    private boolean bot;
     private Avatar avatar;
 
     public Player() {
@@ -56,5 +57,13 @@ public class Player {
 
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+    }
+
+    public boolean isBot() {
+        return bot;
+    }
+
+    public void setBot(boolean bot) {
+        this.bot = bot;
     }
 }
