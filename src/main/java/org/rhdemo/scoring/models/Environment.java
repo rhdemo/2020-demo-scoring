@@ -18,7 +18,7 @@ public class Environment {
     @ConfigProperty(name="kafka.broker.list.host", defaultValue = "undefined")
     String KAFKA_BROKER_LIST_HOST;
 
-    @ConfigProperty(name="dkafka.broker.list.port", defaultValue = "-1")
+    @ConfigProperty(name="kafka.broker.list.port", defaultValue = "-1")
     int KAFKA_BROKER_LIST_PORT;
 
     @ConfigProperty(name="kafka.transaction.topic", defaultValue = "undefined")
