@@ -1,0 +1,66 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "5"
+  creationTimestamp: null
+  generation: 9
+  labels:
+    app: scoring
+  name: scoring
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 5
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: scoring
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: scoring
+    spec:
+      containers:
+      - env:
+        - name: KAFKA_TRANSACTION_TOPIC
+          value: transactions
+        - name: KAFKA_BROKER_LIST_HOST
+          value: demo2020-kafka-bootstrap.kafka-demo.svc
+        - name: KAFKA_BROKER_LIST_PORT
+          value: "9092"
+        image: quay.io/redhatdemo/2020-quarkus-scoring-server:latest
+        imagePullPolicy: Always
+        name: 2020-quarkus-scoring-server
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 5
+  conditions:
+  - lastTransitionTime: 2020-03-13T14:59:27Z
+    lastUpdateTime: 2020-03-27T12:28:14Z
+    message: ReplicaSet "scoring-dbccc9498" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: 2020-03-27T12:29:17Z
+    lastUpdateTime: 2020-03-27T12:29:17Z
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 9
+  readyReplicas: 5
+  replicas: 5
+  updatedReplicas: 5
