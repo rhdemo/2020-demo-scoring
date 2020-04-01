@@ -28,7 +28,7 @@
 }
 ```
 
-#### Response Body
+#### Join Response Body
 
 ```json
 {
@@ -76,7 +76,7 @@
 
 ### Correct 1st Guess POST /game/score
 
-#### Request Body:
+#### Guess Request Body:
 
 ```json
 {
@@ -122,7 +122,7 @@ yet, then an empty string should be in its place.  The guess must contain the de
 `currentRound.choices` is an array of current digits that are available to guess.  The current guess should
 replace the array entry with "guess".
 
-#### Response Body
+#### Good Guess Response Body
 
 ```json
 {
@@ -159,6 +159,10 @@ replace the array entry with "guess".
         "name": "Dollar bill",
         "description": "One United States dollar and no cents",
         "guess": [1, ".", "", ""],
+        "guessResult": {
+            "submittedGuess": [1, ".", "", ""],
+            "answer": ["CORRECT", "CORRECT", "PENDING", "PENDING"]
+        },
         "choices": [9, 'correct', 0, 5, 0, 1],
         "answers": [{"format": "number"}, {"format": "decimal"}, {"format": "number"}, {"format": "number"}],
         "image": "/static/images/0.jpg"
@@ -176,7 +180,7 @@ will be replaced by "correct".
 
 ### Bad 2nd Guess POST /game/score
 
-#### Request Body:
+#### Bad Guess Request Body:
 
 ```json
 {
@@ -221,7 +225,7 @@ any player state.  This must be passed by the UI.
 
 Notice that `currentRound.choices` has a "correct" entry for the previous choice guesssed right.
 
-#### Response Body
+#### Bad Guess Response Body
 
 ```json
 {
@@ -258,6 +262,10 @@ Notice that `currentRound.choices` has a "correct" entry for the previous choice
         "name": "Dollar bill",
         "description": "One United States dollar and no cents",
         "guess": [1, ".", "", ""],
+        "guessResult": {
+            "submittedGuess": [1, ".", 9, ""],
+            "answer": ["CORRECT", "CORRECT", "WRONG", "PENDING"]
+        },
         "choices": [9, 'correct', 0, 5, 0, 1],
         "answers": [{"format": "number"}, {"format": "decimal"}, {"format": "number"}, {"format": "number"}],
         "image": "/static/images/0.jpg"
@@ -275,7 +283,7 @@ Notice that `currentRound.choices` has a "correct" entry for the previous choice
 
 Skpping ahead after making another correct guess.
 
-#### Request Body:
+#### Final Guess Request Body:
 
 ```json
 {
@@ -313,7 +321,7 @@ Skpping ahead after making another correct guess.
 }
 ```
 
-#### Response Body
+#### Final Guess Response Body
 
 ```json
 {
@@ -350,6 +358,10 @@ Skpping ahead after making another correct guess.
         "name": "Kernel of truth t-shirt",
         "description": "This 4.3 ounce, 60% combed ringspun...",
         "guess": [],
+        "guessResult": {
+            "submittedGuess": [1, ".", 0, 0],
+            "answer": ["CORRECT", "CORRECT", "CORRECT", "CORRECT"]
+        },
         "choices": [5, 4, 8, 5, 7, 8],
         "answers": [{"format": "number"}, {"format": "decimal"}, {"format": "number"}, {"format": "number"}],
         "image": "/static/images/1.jpg"

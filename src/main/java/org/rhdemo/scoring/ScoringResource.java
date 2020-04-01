@@ -4,6 +4,7 @@ import org.jboss.logging.Logger;
 import org.rhdemo.scoring.models.CurrentRound;
 import org.rhdemo.scoring.models.Environment;
 import org.rhdemo.scoring.models.GameStatus;
+import org.rhdemo.scoring.models.GuessResult;
 import org.rhdemo.scoring.models.Round;
 import org.rhdemo.scoring.models.Score;
 import org.rhdemo.scoring.services.GamingService;
@@ -75,21 +76,25 @@ public class ScoringResource {
 
         boolean failed = false;
         boolean allGuessesCorrect = true;
+
+        GuessResult result = new GuessResult(currentRound.getGuess());
+
         for (int i = 0; i < currentRound.getGuess().size(); i++) {
             Object curr = currentRound.getGuess().get(i);
-            if (curr instanceof Integer) {
-                if (!round.getPrice().get(i).equals(curr)) {
-                    failed = true;
-                    currentRound.getGuess().set(i, ""); // reset guess to empty slot
-                    allGuessesCorrect = false;
-                }
+            if (curr.equals(round.getPrice().get(i))) {
+                result.getAnswer().set(i, GuessResult.Answer.CORRECT);
+            } else if (curr instanceof Integer) {
+                result.getAnswer().set(i, GuessResult.Answer.WRONG);
+                failed = true;
+                currentRound.getGuess().set(i, ""); // reset guess to empty slot
+                allGuessesCorrect = false;
             } else if (".".equals(curr)) {
-                if (!round.getPrice().get(i).equals(curr)) {
-                    failed = true;
-                    allGuessesCorrect = false;
-                }
+                result.getAnswer().set(i, GuessResult.Answer.WRONG);
+                failed = true;
+                allGuessesCorrect = false;
             } else {
                 // index not guessed yet
+                result.getAnswer().set(i, GuessResult.Answer.PENDING);
                 allGuessesCorrect = false;
             }
         }
@@ -110,16 +115,17 @@ public class ScoringResource {
         }
 
         if (failed) {
-            failedGuess(state);
+            failedGuess(state, result);
         } else {
-            correctGuess(state, allGuessesCorrect);
+            correctGuess(state, result, allGuessesCorrect);
         }
         leaderboard.send(state);
         return state;
     }
 
-    private void correctGuess(GameStatus state, boolean allCorrect) {
+    private void correctGuess(GameStatus state, GuessResult result, boolean allCorrect) {
         state.getScore().setRight(state.getScore().getRight() + 1);
+        state.getCurrentRound().setGuessResult(result);
         if (allCorrect) { // COMPLETE!
             state.getScore().setScore(state.getScore().getScore() + state.getCurrentRound().getPointsAvailable());
             state.getScore().setAward(state.getCurrentRound().getPointsAvailable());
@@ -139,7 +145,8 @@ public class ScoringResource {
         }
     }
 
-    private void failedGuess(GameStatus state) {
+    private void failedGuess(GameStatus state, GuessResult result) {
+        state.getCurrentRound().setGuessResult(result);
         state.getScore().setStatus(Score.BAD_GUESS);
         state.getScore().setWrong(state.getScore().getWrong() + 1);
         int pointsAvailable = state.getCurrentRound().getPointsAvailable();
