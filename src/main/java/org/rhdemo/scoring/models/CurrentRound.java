@@ -6,6 +6,7 @@ import java.util.List;
 public class CurrentRound extends Round {
     private int pointsAvailable;
     private List<Object> guess;
+    private GuessResult guessResult;
 
     public CurrentRound() {
     }
@@ -34,5 +35,13 @@ public class CurrentRound extends Round {
 
     public void setGuess(List<Object> guess) {
         this.guess = guess;
+    }
+
+    public GuessResult getGuessResult() {
+        return guessResult;
+    }
+
+    public void setGuessResult(GuessResult guessResult) {
+        this.guessResult = guessResult;
     }
 }
