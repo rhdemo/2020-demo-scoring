@@ -6,7 +6,7 @@ module.exports = [
     "price": [1, '.', 0, 0],
     "choices": [9, 1, 0, 5, 0, 1],
     "answers": [{format: "number"}, {format: "decimal"}, {format: "number"}, {format: "number"}],
-    "image": "/static/images/0.jpg"
+    "image": "/static/images/0.png"
   },
   {
     "id": 1,
@@ -15,7 +15,7 @@ module.exports = [
     "price": [8, '.', 5, 5],
     "choices": [5, 4, 8, 5, 7, 8],
     "answers": [{format: "number"}, {format: "decimal"}, {format: "number"}, {format: "number"}],
-    "image": "/static/images/1.jpg"
+    "image": "/static/images/1.png"
   },
   {
     "id": 2,
@@ -24,7 +24,7 @@ module.exports = [
     "price": [8, '.', 5, 8],
     "choices": [9, 0, 5, 8, 3, 8],
     "answers": [{format: "number"}, {format: "decimal"}, {format: "number"}, {format: "number"}],
-    "image": "/static/images/2.jpg"
+    "image": "/static/images/2.png"
   }
 ];
 
