@@ -24,7 +24,7 @@ public class ProductDB {
                 .price(1, ".", 0, 0)
                 .choices(9, 1, 0, 5, 0, 1)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/0.jpg");
+                .image("/static/images/0.png");
         rounds.add(round);
 
         round = new Round()
@@ -34,7 +34,7 @@ public class ProductDB {
                 .price(8, ".", 5, 5)
                 .choices(5, 4, 8, 5, 7, 8)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/1.jpg");
+                .image("/static/images/1.png");
         rounds.add(round);
 
         round = new Round()
@@ -44,7 +44,7 @@ public class ProductDB {
                 .price(8, ".", 5, 8)
                 .choices(9, 0, 5, 8, 3, 8)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/2.jpg");
+                .image("/static/images/2.png");
         rounds.add(round);
 
         round = new Round()
@@ -54,7 +54,7 @@ public class ProductDB {
                 .price(9,3, ".", 7, 5)
                 .choices(0, 9, 5, 3, 7, 5)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/3.jpg");
+                .image("/static/images/3.png");
         rounds.add(round);
 
         round = new Round()
@@ -64,7 +64,7 @@ public class ProductDB {
                 .price(2,9, ".", 0, 0)
                 .choices(0, 9, 2, 3, 0, 9)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/4.jpg");
+                .image("/static/images/4.png");
         rounds.add(round);
 
         round = new Round()
@@ -74,7 +74,7 @@ public class ProductDB {
                 .price(8, ".", 9, 5)
                 .choices(0, 6, 8, 5, 0, 9)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/5.jpg");
+                .image("/static/images/5.png");
         rounds.add(round);
 
         round = new Round()
@@ -84,7 +84,7 @@ public class ProductDB {
                 .price(1, 3, ".", 7, 5)
                 .choices(0, 1, 8, 5, 3, 7)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/6.jpg");
+                .image("/static/images/6.png");
         rounds.add(round);
 
         round = new Round()
@@ -94,7 +94,7 @@ public class ProductDB {
                 .price(3, 0, ".", 2, 5)
                 .choices(0, 1, 4, 5, 3, 2)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/7.jpg");
+                .image("/static/images/7.png");
         rounds.add(round);
 
         round = new Round()
@@ -104,7 +104,7 @@ public class ProductDB {
                 .price(4, 9, ".", 9, 5)
                 .choices(0, 9, 4, 5, 9, 0)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/8.jpg");
+                .image("/static/images/8.png");
         rounds.add(round);
 
         round = new Round()
@@ -114,7 +114,7 @@ public class ProductDB {
                 .price(2, 0, ".", 8, 0)
                 .choices(0, 9, 3, 0, 2, 8)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/9.jpg");
+                .image("/static/images/9.png");
         rounds.add(round);
 
         round = new Round()
@@ -124,7 +124,7 @@ public class ProductDB {
                 .price(4, 7, ".", 8, 5)
                 .choices(7, 8, 3, 4, 5, 8)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/10.jpg");
+                .image("/static/images/10.png");
         rounds.add(round);
 
         round = new Round()
@@ -134,7 +134,7 @@ public class ProductDB {
                 .price(3, ".", 1, 0)
                 .choices(0, 5, 3, 4, 0, 1)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/11.jpg");
+                .image("/static/images/11.png");
         rounds.add(round);
 
         round = new Round()
@@ -144,7 +144,7 @@ public class ProductDB {
                 .price(4, ".", 1, 5)
                 .choices(0, 5, 3, 4, 0, 1)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/12.jpg");
+                .image("/static/images/12.png");
         rounds.add(round);
 
         round = new Round()
@@ -154,7 +154,7 @@ public class ProductDB {
                 .price(1, 3, ".", 3, 0)
                 .choices(0, 5, 3, 3, 0, 1)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/13.jpg");
+                .image("/static/images/13.png");
         rounds.add(round);
 
         round = new Round()
@@ -164,7 +164,7 @@ public class ProductDB {
                 .price(1, 3, ".", 0, 0)
                 .choices(0, 9, 3, 7, 0, 1)
                 .answers(NUMBER, NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/14.jpg");
+                .image("/static/images/14.png");
         rounds.add(round);
 
         round = new Round()
@@ -174,7 +174,7 @@ public class ProductDB {
                 .price(3, ".", 8, 0)
                 .choices(0, 8, 3, 2, 0, 1)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/15.jpg");
+                .image("/static/images/15.png");
         rounds.add(round);
 
         round = new Round()
@@ -184,7 +184,7 @@ public class ProductDB {
                 .price(1, ".", 6, 0)
                 .choices(0, 6, 9, 9, 0, 1)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/16.jpg");
+                .image("/static/images/16.png");
         rounds.add(round);
 
         round = new Round()
@@ -194,7 +194,7 @@ public class ProductDB {
                 .price(3, ".", 0, 0)
                 .choices(0, 3, 9, 9, 0, 1)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/17.jpg");
+                .image("/static/images/17.png");
         rounds.add(round);
 
         round = new Round()
@@ -204,7 +204,7 @@ public class ProductDB {
                 .price(3, ".", 4, 0)
                 .choices(3, 3, 9, 4, 0, 9)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/18.jpg");
+                .image("/static/images/18.png");
         rounds.add(round);
 
         round = new Round()
@@ -214,7 +214,7 @@ public class ProductDB {
                 .price(1, ".", 3, 5)
                 .choices(1, 3, 9, 5, 0, 9)
                 .answers(NUMBER, DECIMAL, NUMBER, NUMBER)
-                .image("/static/images/19.jpg");
+                .image("/static/images/19.png");
         rounds.add(round);
 
     }

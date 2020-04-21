@@ -69,7 +69,7 @@
         "guess": [],
         "choices": [9, 1, 0, 5, 0, 1],
         "answers": [{"format": "number"}, {"format": "decimal"}, {"format": "number"}, {"format": "number"}],
-        "image": "/static/images/0.jpg"
+        "image": "/static/images/0.png"
     }
 }
 ```
@@ -165,7 +165,7 @@ replace the array entry with "guess".
         },
         "choices": [9, 'correct', 0, 5, 0, 1],
         "answers": [{"format": "number"}, {"format": "decimal"}, {"format": "number"}, {"format": "number"}],
-        "image": "/static/images/0.jpg"
+        "image": "/static/images/0.png"
     }
 }
 ```
@@ -268,7 +268,7 @@ Notice that `currentRound.choices` has a "correct" entry for the previous choice
         },
         "choices": [9, 'correct', 0, 5, 0, 1],
         "answers": [{"format": "number"}, {"format": "decimal"}, {"format": "number"}, {"format": "number"}],
-        "image": "/static/images/0.jpg"
+        "image": "/static/images/0.png"
     }
 }
 ```
@@ -364,7 +364,7 @@ Skpping ahead after making another correct guess.
         },
         "choices": [5, 4, 8, 5, 7, 8],
         "answers": [{"format": "number"}, {"format": "decimal"}, {"format": "number"}, {"format": "number"}],
-        "image": "/static/images/1.jpg"
+        "image": "/static/images/1.png"
     }
 }
 ```
