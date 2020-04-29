@@ -1,4 +1,8 @@
-export $(shell sed 's/=.*//' .env.default)
+ENV_FILE := .env.default
+ifneq ("$(wildcard $(ENV_FILE))","")
+include ${ENV_FILE}
+export $(shell sed 's/=.*//'  ${ENV_FILE})
+endif
 
 ENV_FILE := .env
 ifneq ("$(wildcard $(ENV_FILE))","")
@@ -8,24 +12,13 @@ endif
 
 ##################################
 
-# DEV - run apps locally for development
-
 .PHONY: dev
 dev:
-	./install/dev.sh
+	mvn quarkus:dev
 
 ##################################
-
-# BUILD - build images locally using s2i
 
 .PHONY: build
 build:
-	./install/build.sh
+	mvn clean install
 
-##################################
-
-# PUSH - push images to repository
-
-.PHONY: push
-push:
-	./install/push.sh
